@@ -1,0 +1,16 @@
+{
+  "name": "tessel-climate",
+  "version": "0.0.1",
+  "description": "Report tessel climate events",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "keywords": [
+    "Tessel",
+    "Climate",
+    "IoT"
+  ],
+  "author": "Brandon Doran",
+  "license": "MIT"
+}
