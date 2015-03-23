@@ -28,8 +28,12 @@ function readSensor (callback) {
 }
 
 function postData (data, callback) {
-  keen.addEvent('climate', data, callback);
-  //callback(null, data);
+  if (wifi.isConnected) {
+    keen.addEvent('climate', data, callback);
+  } else {
+    console.log('Event not reported: no wifi connection.');
+    process.nextTick(callback);
+  }
 }
 
 climate.on('ready', function() {
