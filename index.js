@@ -53,3 +53,15 @@ climate.on('ready', function() {
     }
   });
 });
+
+wifi.on('connect', function(res){
+  console.log('wifi connected:', res);
+}).on('disconnect', function(){
+  console.log('wifi disconnected');
+})
+.on('timeout', function() {
+  console.error('wifi timeout');
+})
+.on('error', function(err) {
+  console.error('wifi error:', err, err.stack);
+});
