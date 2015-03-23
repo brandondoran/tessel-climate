@@ -23,6 +23,7 @@ function readSensor (callback) {
       return callback(err);
     }
     result.timestamp = (new Date()).toISOString();
+    result.deviceId = tessel.deviceId();
     callback(null, result);
   });
 }
@@ -36,8 +37,7 @@ function postData (data, callback) {
   }
 }
 
-climate.on('ready', function() {
-  console.log('climate sensor ready');
+function doWork () {
   async.auto({
     request: function(done) {
       readSensor(done);
@@ -51,7 +51,16 @@ climate.on('ready', function() {
     } else {
       console.log(result);
     }
+    setTimeout(doWork, 30000);
   });
+}
+
+climate.on('ready', function() {
+  console.log('climate sensor ready');
+  doWork();
+})
+.on('error', function(err) {
+  console.error('climate error:', err, err.stack);
 });
 
 wifi.on('connect', function(res){
