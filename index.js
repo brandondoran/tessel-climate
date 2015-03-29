@@ -8,10 +8,27 @@ var Keen = require('./keen');
 
 var climate = climatelib.use(tessel.port.A);
 var keen = new Keen(config.keen);
+var timeouts = 0;
 
 function wifiConnect(){
   console.log('attempting wifi connection');
   wifi.connect(config.wifi);
+}
+
+function wifiPowerCycle(){
+  // when the wifi chip resets, it will automatically try to reconnect
+  // to the last saved network
+  wifi.reset(function(){
+    timeouts = 0; // reset timeouts
+    console.log('done power cycling');
+    // give it some time to auto reconnect
+    setTimeout(function(){
+      if (!wifi.isConnected()) {
+        // try to reconnect
+        connect();
+      }
+    }, 20 * 1000);
+  });
 }
 
 function readSensor (callback) {
@@ -59,6 +76,7 @@ var doWork = function doWork () {
       led.blue.blink(1000);
       console.log(result);
     }
+    console.log('memory usage: ', process.memoryUsage());
     setTimeout(doWork, config.delay);
   });
 };
@@ -81,6 +99,14 @@ wifi.on('connect', function(res){
 })
 .on('timeout', function() {
   console.error('wifi timeout');
+  timeouts++;
+  if (timeouts > 2) {
+    // reset the wifi chip if we've timed out too many times
+    wifiPowerCycle();
+  } else {
+    // try to reconnect
+    wifiConnect();
+  }
 })
 .on('error', function(err) {
   console.error('wifi error:', err, err.stack);
