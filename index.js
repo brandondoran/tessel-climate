@@ -1,14 +1,13 @@
 var tessel = require('tessel');
 var climatelib = require('climate-si7020');
 var wifi = require('wifi-cc3000');
+var led = require('tessel-led');
 var async = require('async');
-var Keen = require('keen-js');
+var config = require('./config');
+var Keen = require('./keen');
 
 var climate = climatelib.use(tessel.port.A);
-var keen = new Keen({
-  writeKey: '565ef9dbdde2f0039758c2b41222228be7ee65a1c3251c7068b5c7dca9dd8ef21b906fdd6d65f1bc8658ca85f87e769c939440a8ee4876016d0ce0679503ccebbe14c5f4e1e33d748fd2c73ac8da2a91ed17cb24179d6805617d3dab38d271bd7a95eac83acdfc4f4142e952a09bcd77',
-  projectId: '550ba184c1e0ab2052426f3a'
-});
+var keen = new Keen(config.keen);
 
 function readSensor (callback) {
   async.series({
@@ -30,14 +29,16 @@ function readSensor (callback) {
 
 function postData (data, callback) {
   if (wifi.isConnected) {
-    keen.addEvent('climate', data, callback);
+    keen.addEvent(config.keen.collection, data, callback);
   } else {
     console.log('Event not reported: no wifi connection.');
     process.nextTick(callback);
   }
 }
 
-function doWork () {
+var doWork = function doWork () {
+  doWork.counter++;
+  console.log('doWork calls:', doWork.counter);
   async.auto({
     request: function(done) {
       readSensor(done);
@@ -47,13 +48,17 @@ function doWork () {
     }]
   }, function(err, result) {
     if (err) {
+      led.red.blink(1000);
       console.error(err);
     } else {
+      led.blue.blink(1000);
       console.log(result);
     }
-    setTimeout(doWork, 30000);
+    setTimeout(doWork, config.delay);
   });
-}
+};
+
+doWork.counter = 0;
 
 climate.on('ready', function() {
   console.log('climate sensor ready');

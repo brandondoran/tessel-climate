@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "lint": "jshint *.js",
-    "test": "npm test",
+    "pretest": "npm run lint",
+    "test": "env NODE_ENV=test ./node_modules/mocha/bin/mocha --reporter spec",
+    "prestart": "npm test",
     "start": "tessel run index.js"
   },
   "keywords": [
@@ -18,8 +20,12 @@
   "dependencies": {
     "async": "^0.9.0",
     "climate-si7020": "^0.1.1",
-    "keen-js": "^3.2.4",
+    "jsonist": "git://github.com/brandondoran/jsonist.git",
     "tessel": "^0.3.21",
+    "tessel-led": "0.0.1",
     "wifi-cc3000": "0.0.1"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.1"
   }
 }

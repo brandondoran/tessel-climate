@@ -1,0 +1,8 @@
+{
+  "keen": {
+    "writeKey": "WRITE_KEY",
+    "projectId": "PROJECT_ID",
+    "collection": "climate"
+  },
+  "delay": 30000
+}
