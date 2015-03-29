@@ -9,6 +9,11 @@ var Keen = require('./keen');
 var climate = climatelib.use(tessel.port.A);
 var keen = new Keen(config.keen);
 
+function wifiConnect(){
+  console.log('attempting wifi connection');
+  wifi.connect(config.wifi);
+}
+
 function readSensor (callback) {
   async.series({
     temp: function(done) {
@@ -72,6 +77,7 @@ wifi.on('connect', function(res){
   console.log('wifi connected:', res);
 }).on('disconnect', function(){
   console.log('wifi disconnected');
+  wifiConnect();
 })
 .on('timeout', function() {
   console.error('wifi timeout');

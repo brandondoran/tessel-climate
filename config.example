@@ -1,4 +1,10 @@
 {
+  "wifi": {
+    "security": "SECURITY",
+    "ssid": "NETWORK",
+    "password": "PASS"
+    "timeout": 30
+  },
   "keen": {
     "writeKey": "WRITE_KEY",
     "projectId": "PROJECT_ID",
