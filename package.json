@@ -10,22 +10,38 @@
     "prestart": "npm test",
     "start": "tessel run index.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brandondoran/tessel-climate.git"
+  },
   "keywords": [
     "Tessel",
     "Climate",
-    "IoT"
+    "Temperature",
+    "Humidity",
+    "IoT",
+    "keen.io",
+    "events"
   ],
-  "author": "Brandon Doran",
+   "author": {
+    "name": "Brandon Doran",
+    "email": "bdoran@gmail.com"
+  },
   "license": "MIT",
+  "homepage": "https://github.com/brandondoran/keen-event-client",
+  "dependencies": {
+    "jsonist": "^1.0.3"
+  },
   "dependencies": {
     "async": "^0.9.0",
     "climate-si7020": "^0.1.1",
-    "jsonist": "git://github.com/brandondoran/jsonist.git",
+    "keen-event-client": "^1.0.0",
     "tessel": "^0.3.21",
     "tessel-led": "0.0.1",
     "wifi-cc3000": "0.0.1"
   },
   "devDependencies": {
+    "jshint": "^2.7.0",
     "mocha": "^2.2.1"
   }
 }

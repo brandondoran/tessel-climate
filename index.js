@@ -4,10 +4,11 @@ var wifi = require('wifi-cc3000');
 var led = require('tessel-led');
 var async = require('async');
 var config = require('./config');
-var Keen = require('./keen');
+//var Keen = require('keen-js');
+var keen = require('keen-event-client');
 
 var climate = climatelib.use(tessel.port.A);
-var keen = new Keen(config.keen);
+var client = keen.createClient(config.keen);
 var timeouts = 0;
 
 function wifiConnect(){
@@ -17,15 +18,16 @@ function wifiConnect(){
 
 function wifiPowerCycle(){
   // when the wifi chip resets, it will automatically try to reconnect
-  // to the last saved network
+  // to the last saved 
+  console.log('power cycling wifi');
   wifi.reset(function(){
     timeouts = 0; // reset timeouts
-    console.log('done power cycling');
+    console.log('done power cycling wifi');
     // give it some time to auto reconnect
     setTimeout(function(){
       if (!wifi.isConnected()) {
         // try to reconnect
-        connect();
+        wifiConnect();
       }
     }, 20 * 1000);
   });
@@ -51,7 +53,7 @@ function readSensor (callback) {
 
 function postData (data, callback) {
   if (wifi.isConnected) {
-    keen.addEvent(config.keen.collection, data, callback);
+    client.addEvent(config.keen.collection, data, callback);
   } else {
     console.log('Event not reported: no wifi connection.');
     process.nextTick(callback);
@@ -71,13 +73,14 @@ var doWork = function doWork () {
   }, function(err, result) {
     if (err) {
       led.red.blink(1000);
-      console.error(err);
+      console.error('http request error:', err, err.stack);
+      wifiPowerCycle();
+      setTimeout(doWork, config.delay);
     } else {
       led.blue.blink(1000);
       console.log(result);
+      setTimeout(doWork, config.delay);
     }
-    console.log('memory usage: ', process.memoryUsage());
-    setTimeout(doWork, config.delay);
   });
 };
 
@@ -91,9 +94,10 @@ climate.on('ready', function() {
   console.error('climate error:', err, err.stack);
 });
 
-wifi.on('connect', function(res){
-  console.log('wifi connected:', res);
-}).on('disconnect', function(){
+wifi.on('connect', function(res) {
+  console.log('wifi ready');
+})
+.on('disconnect', function(){
   console.log('wifi disconnected');
   wifiConnect();
 })
@@ -110,4 +114,5 @@ wifi.on('connect', function(res){
 })
 .on('error', function(err) {
   console.error('wifi error:', err, err.stack);
+  wifiPowerCycle();
 });
