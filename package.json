@@ -1,13 +1,12 @@
 {
   "name": "tessel-climate",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Report tessel climate events",
   "main": "index.js",
   "scripts": {
     "lint": "jshint *.js",
     "pretest": "npm run lint",
-    "test": "env NODE_ENV=test ./node_modules/mocha/bin/mocha --reporter spec",
-    "prestart": "npm test",
+    "test": "env NODE_ENV=test mocha --reporter spec",
     "start": "tessel run index.js"
   },
   "repository": {

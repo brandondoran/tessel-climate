@@ -3,9 +3,8 @@ var climatelib = require('climate-si7020');
 var wifi = require('wifi-cc3000');
 var led = require('tessel-led');
 var async = require('async');
-var config = require('./config');
-//var Keen = require('keen-js');
 var keen = require('keen-event-client');
+var config = require('./config');
 
 var climate = climatelib.use(tessel.port.A);
 var client = keen.createClient(config.keen);
@@ -68,7 +67,9 @@ var doWork = function doWork () {
       readSensor(done);
     },
     response: ['request', function(done, results) {
-      postData(results.request, done);
+      postData(results.request, function(err, data, res) {
+        done(err, data);
+      });
     }]
   }, function(err, result) {
     if (err) {
