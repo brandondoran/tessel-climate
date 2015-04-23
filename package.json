@@ -1,6 +1,6 @@
 {
   "name": "tessel-climate",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Report tessel climate events",
   "main": "index.js",
   "scripts": {

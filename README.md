@@ -34,7 +34,7 @@ See [Tessel cli docs](https://tessel.io/docs/cli#commands) for more details.
 
 ### Filename Size Limit
 
-Nested dependencies in the node_modules may hit the Tessel's file size limit:
+Nested dependencies in the node_modules may hit the Tessel's file size limit, resulting in the following error message when the program starts up:
  
     Error parsing tar file: -2
     NOTE: Tessel archive expansion does not yet support long file paths.
